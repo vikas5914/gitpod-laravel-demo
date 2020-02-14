@@ -1,0 +1,11 @@
+ports:
+- port: 8000
+  onOpen: open-preview
+tasks:
+- init: |
+    composer install
+    php -r "file_exists('.env') || copy('.env.example', '.env');"
+    url=$(gp url 8080); sed -i'' "s#^APP_URL=http://localhost*#APP_URL=$url\nASSET_URL=$url#g" .env  #change APP_URL and ASSET_URL to 8080 URL
+    php artisan key:generate --ansi
+  command: |
+    php artisan serve

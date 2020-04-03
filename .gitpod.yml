@@ -1,6 +1,10 @@
+image:
+  file: Dockerfile
 ports:
 - port: 8000
   onOpen: open-preview
+- port: 3306
+  onOpen: ignore
 tasks:
 - before: |
     php -r "file_exists('.env') || copy('.env.example', '.env');"
@@ -10,3 +14,9 @@ tasks:
   command: |
     php artisan key:generate --ansi
     php artisan serve
+  - name: MySQL
+    command: mysqld
+  - name: Apache
+    command: >
+        apachectl start;
+        multitail /var/log/apache2/error.log -I /var/log/apache2/access.log

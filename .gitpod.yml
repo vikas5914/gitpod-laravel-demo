@@ -6,6 +6,13 @@ ports:
 - port: 3306
   onOpen: ignore
 tasks:
+- name: MySQL
+  command: >
+      mysqld
+- name: Apache
+  command: >
+      apachectl start;
+      multitail /var/log/apache2/error.log -I /var/log/apache2/access.log
 - before: |
     php -r "file_exists('.env') || copy('.env.example', '.env');"
     url=$(gp url 8000); sed -i'' "s#^APP_URL=http://localhost*#APP_URL=$url\nASSET_URL=$url#g" .env  #change APP_URL and ASSET_URL to 8080 URL
@@ -14,9 +21,4 @@ tasks:
   command: |
     php artisan key:generate --ansi
     php artisan serve
-  - name: MySQL
-    command: mysqld
-  - name: Apache
-    command: >
-        apachectl start;
-        multitail /var/log/apache2/error.log -I /var/log/apache2/access.log
+
